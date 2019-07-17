@@ -743,12 +743,8 @@ public:
 
         wl_surface_commit(surface);
 
-        surface.attach_buffer(width, height);
+        surface.attach_visible_buffer(width, height);
 
-        bool surface_rendered{false};
-        surface.add_frame_callback([&surface_rendered](auto) { surface_rendered = true; });
-        wl_surface_commit(surface);
-        dispatch_until([&surface_rendered]() { return surface_rendered; }, 10s);
         return surface;
     }
 
@@ -767,12 +763,8 @@ public:
 
         wl_surface_commit(surface);
 
-        surface.attach_buffer(width, height);
+        surface.attach_visible_buffer(width, height);
 
-        bool surface_rendered{false};
-        surface.add_frame_callback([&surface_rendered](auto) { surface_rendered = true; });
-        wl_surface_commit(surface);
-        dispatch_until([&surface_rendered]() { return surface_rendered; }, 10s);
         return surface;
     }
 
@@ -791,12 +783,8 @@ public:
 
         wl_surface_commit(surface);
 
-        surface.attach_buffer(width, height);
+        surface.attach_visible_buffer(width, height);
 
-        bool surface_rendered{false};
-        surface.add_frame_callback([&surface_rendered](auto) { surface_rendered = true; });
-        wl_surface_commit(surface);
-        dispatch_until([&surface_rendered]() { return surface_rendered; }, 10s);
         return surface;
     }
 
@@ -1618,6 +1606,15 @@ public:
         wl_callback_add_listener(callback, &frame_listener, holder.release());
     }
 
+    void attach_visible_buffer(int width, int height)
+    {
+        attach_buffer(width, height);
+        auto surface_rendered = std::make_shared<bool>(false);
+        add_frame_callback([surface_rendered](auto) { *surface_rendered = true; });
+        wl_surface_commit(surface_);
+        owner_.dispatch_until([surface_rendered]() { return *surface_rendered; });
+    }
+
     Client& owner() const
     {
         return owner_;
@@ -1679,6 +1676,11 @@ void wlcs::Surface::attach_buffer(int width, int height)
 void wlcs::Surface::add_frame_callback(std::function<void(int)> const& on_frame)
 {
     impl->add_frame_callback(on_frame);
+}
+
+void wlcs::Surface::attach_visible_buffer(int width, int height)
+{
+    impl->attach_visible_buffer(width, height);
 }
 
 wlcs::Client& wlcs::Surface::owner() const
