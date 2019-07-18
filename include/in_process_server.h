@@ -42,6 +42,7 @@ struct WlcsTouch;
 struct WlcsServerIntegration;
 
 struct zwlr_layer_shell_v1;
+struct zwlr_foreign_toplevel_manager_v1;
 
 namespace wlcs
 {
@@ -231,6 +232,7 @@ public:
     zxdg_shell_v6* xdg_shell_v6() const;
     xdg_wm_base* xdg_shell_stable() const;
     zwlr_layer_shell_v1* layer_shell_v1() const;
+    zwlr_foreign_toplevel_manager_v1* zwlr_foreign_toplevel_manager_v1_bind() const;
     wl_surface* focused_window() const;
     wl_surface* touched_window() const;
     std::pair<wl_fixed_t, wl_fixed_t> pointer_position() const;
