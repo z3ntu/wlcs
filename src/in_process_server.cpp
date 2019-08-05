@@ -920,7 +920,9 @@ public:
     void dispatch_until(
         std::function<bool()> const& predicate, std::chrono::seconds timeout)
     {
-        auto const end_time = std::chrono::steady_clock::now() + timeout;
+        auto const end_time =
+            std::chrono::steady_clock::now() +
+            std::chrono::duration_cast<std::chrono::nanoseconds>(timeout);
         while (!predicate())
         {
             while (wl_display_prepare_read(display) != 0)
